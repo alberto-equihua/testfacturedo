@@ -67,6 +67,7 @@ const app = new Vue({
             self.request_data = JSON.stringify({ 
                 "user_id": self.user_id
             });
+
             $.ajax({
                 url: 'api/rss/chanles/users/',
                 contentType: "application/json",
@@ -82,4 +83,26 @@ const app = new Vue({
             });
         }
     },
+    created: function(){
+        self = this;
+        self.request_data = JSON.stringify({ 
+            "user_id": parseInt(self.user_id),
+            "all":true,
+        });
+        
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/rss/chanles/datasource/',
+            contentType: "application/json",
+            dataType: 'json',
+            data: self.request_data,
+            type: 'POST',
+            success: function(result){
+                //console.log(result.data.users);
+                self.invox = result;
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
 })

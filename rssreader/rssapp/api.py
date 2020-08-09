@@ -252,16 +252,24 @@ def get_channel_users(request):
 
 @api_view(['GET','POST'])
 def get_rsschannel_data(request):
-    channels = user = rss = serializer = None
-    feeds = entries = {}, []
+    channels = []
     user_id = 0
-
+    user = None
+    
     try:
-        if request.method == 'GET':
-            channels = RssChannel.objects.all()
-            serializer = RssChannelSerializer(channels, many=True)
-            return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
-        elif request.method == 'POST':
+        if request.data.get('all'):
+            user_id = request.data.get('user_id')
+            
+            if user_id:
+                user = Users.objects.filter(id=user_id).first()
+                
+                for ch in user.channels_ids.all():
+                    channels.append(ch)
+                serializer = RssChannelSerializer(channels, many=True)
+                return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({'error':'User not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
+        elif request.data.get('sync'):
             user_id = request.data.get('user_id', False)
 
             if user_id:
@@ -269,10 +277,32 @@ def get_rsschannel_data(request):
                 if user:
                     rss = RssChannelData()
 
-                    for ch in user.channels_ids:
-                        feed, entries = rss.get_data(ch.url)
+                    for ch in user.channels_ids.all():
+                        rss.get_data(ch.url)
+                        feed, entries = rss.feed, rss.entries
+                        
                         if len(feed) > 0 and len(entries) > 0:
-                            print(feed)
+                            f = Feed.objects.create(
+                                title = feed['title'], 
+                                link = feed['link'], 
+                                description = feed['description']
+                            )
+                            
+                            ch.feed_id = f
+                            ch.save()
+                            
+                            for en in entries:
+                                #print(en)
+                                e = Entry.objects.create(
+                                    entry_id = en['id'],
+                                    link = en['link'],
+                                    published = en['published'],
+                                    summary = en['summary']
+                                )
+                                ch.entries_ids.add(e)
+                            
+                            channels.append(ch)
+
                 serializer = RssChannelSerializer(channels, many=True)
                 return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
                 

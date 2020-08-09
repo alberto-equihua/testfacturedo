@@ -17,13 +17,13 @@ class FeedSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Feed
-        fields = ['id','entry_id','link','published','summary']
+        fields = ['id','link','title','description']
 
 class EntrySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Entry
-        fields = ['id','link','title','description']
+        fields = ['id','entry_id','link','published','summary']
 
 class RssChannelSerializer(serializers.ModelSerializer):
     category_id = CategorySerializer(many=False, read_only=False)
