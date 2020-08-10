@@ -13,20 +13,19 @@ const app = new Vue({
         addChannelClick(channel){
             self = this;
             
-            self.request_data = JSON.stringify({
+            params = JSON.stringify({
                 "addchannel": true,
-                "model": "channel",
                 "user_id": parseInt(self.user_id),
                 "channel_id": channel.id
             });
             //alert(self.request_data);
 
             $.ajax({
-                url: 'http://127.0.0.1:8000/api/crud/update/',
+                url: 'http://127.0.0.1:8000/api/channel/update/',
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'POST',
-                data: self.request_data,
+                data: params,
                 success: function(result){
                     alert(result.data);
                     //console.log(result);
@@ -38,20 +37,19 @@ const app = new Vue({
         },
         removeChannelClick(channel){
             self = this;
+            params = null;
             
-            self.request_data = JSON.stringify({
-                "model": "channel",
+            params = JSON.stringify({
                 "channel_id": channel.id,
-                "deletechannel": true,
                 "user_id": parseInt(self.user_id)
             });
 
             $.ajax({
-                url: 'http://127.0.0.1:8000/api/crud/delete/',
+                url: 'http://127.0.0.1:8000/api/channel/delete/',
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'POST',
-                data: self.request_data,
+                data: params,
                 success: function(result){
                     alert(result.data);
                     //self.channels.pop(channel);
@@ -64,45 +62,50 @@ const app = new Vue({
         },
         getChannels(){
             self = this;
-            self.request_data = JSON.stringify({ 
+            params = JSON.stringify({ 
                 "user_id": self.user_id
             });
 
             $.ajax({
-                url: 'api/rss/chanles/users/',
+                url: 'http://127.0.0.1:8000/api/rss/channels/users/',
                 contentType: "application/json",
                 dataType: 'json',
                 type: 'POST',
-                data: self.request_data,
+                data: params,
                 success: function(result){
+                    console.log(result);
                     self.channels = result.data;
                 },
                 error: function(error) {
                     console.log(error);
                 }
             });
+        },
+        sync_channels(){
+            self = this;
+            
+            fetch('http://127.0.0.1:8000/api/rss/channels/datasource/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    "user_id": parseInt(self.user_id),
+                    "async":true,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(el => self.invox.push(el));
+                console.log(data);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+            
         }
     },
-    created: function(){
-        self = this;
-        self.request_data = JSON.stringify({ 
-            "user_id": parseInt(self.user_id),
-            "all":true,
-        });
-        
-        $.ajax({
-            url: 'http://127.0.0.1:8000/api/rss/chanles/datasource/',
-            contentType: "application/json",
-            dataType: 'json',
-            data: self.request_data,
-            type: 'POST',
-            success: function(result){
-                //console.log(result.data.users);
-                self.invox = result;
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
+    mounted() {
+        setInterval(this.sync_channels, 10000);
     }
 })

@@ -17,6 +17,7 @@ const admin_app = new Vue({
         request_data: null,
         item_to_delete: {'name':''},
         item_to_update: null,
+        data_api: [],
     },
     methods:{
         setModelClick(model, operation){
@@ -24,163 +25,227 @@ const admin_app = new Vue({
             this.operation = operation;
         },
         createClick(){
+            params = null;
             self = this;
-
-            if(self.model == 'user'){
-                self.request_data = JSON.stringify({ 
-                    "model": "user", "name": self.name, "username": self.username, 
-                    "password": self.password, "is_admin": self.is_admin
+            
+            if(this.model == 'user'){
+                params = JSON.stringify({ 
+                    "name": this.name, "username": this.username, 
+                    "password": this.password, "is_admin": this.is_admin
                 });
-            }
 
-            if(self.model == 'category'){
-                self.request_data = JSON.stringify({ 
-                    "model": "category", "name": self.name
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/user/create/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.users.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
             
-            if(self.model == 'channel'){
-                categ_id = self.categ_id.split('-');
-                categ_id = categ_id[0]
+            if(this.model == 'category'){
+                params = JSON.stringify({ 
+                    "name": this.name
+                });
 
-                self.request_data = JSON.stringify({ 
-                    "model": "channel", "name": self.name, "url": self.url, "category_id": categ_id
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/category/create/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.categories.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/crud/create/',
-                contentType: "application/json",
-                dataType: 'json',
-                type: 'POST',
-                data: self.request_data,
-                success: function(result){
-                    if(self.model == 'user'){
-                        self.users.push(result);
-                    }
-                    if(self.model == 'category'){
-                        self.categories.push(result);
-                    }
-                    if(self.model == 'channel'){
-                        self.channels.push(result);
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
+            
+            if(this.model == 'channel'){
+                categ_id = this.categ_id.split('-');
+                categ_id = categ_id[0]
 
-            self.name = "";
-            self.username = "";
-            self.password = "";
-            self.is_admin = "";
-            self.url = "";
+                params = JSON.stringify({ 
+                    "name": this.name, "url": this.url, "category_id": categ_id
+                });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/channel/create/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.channels.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            this.name = "";
+            this.username = "";
+            this.password = "";
+            this.is_admin = "";
+            this.url = "";
         },
         updateClick(){
             self = this;
+            params = null;
 
-            if(self.model == 'user'){
-                self.request_data = JSON.stringify({ 
-                    "model": "user", "res_id":self.id, "name": self.name, "username": self.username, 
-                    "password": self.password, "is_admin": self.is_admin
+            if(this.model == 'user'){
+                params = JSON.stringify({ 
+                    "user_id": this.id, "name": this.name, "username": this.username, 
+                    "password": this.password, "is_admin": this.is_admin
+                });
+                
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/user/update/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.users.pop(self.item_to_update);
+                        self.users.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
 
-            if(self.model == 'category'){
-                self.request_data = JSON.stringify({ 
-                    "model": "category", "name": self.name, "res_id":self.id
+            if(this.model == 'category'){
+                params = JSON.stringify({ 
+                    "name": this.name, "category_id":this.id
+                });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/category/update/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.categories.pop(self.item_to_update);
+                        self.categories.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
             
-            if(self.model == 'channel'){
-                categ_id = self.categ_id.split('-');
+            if(this.model == 'channel'){
+                categ_id = this.categ_id.split('-');
                 categ_id = categ_id[0]
 
-                self.request_data = JSON.stringify({ 
-                    "model": "channel", "res_id":self.id, "name": self.name, "url": self.url, "category_id": categ_id
+                params = JSON.stringify({ 
+                    "channel_id":this.id, "name": this.name, "url": this.url, "category_id": categ_id
+                });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/channel/update/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.channels.pop(self.item_to_update);
+                        self.channels.push(data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
-            console.log(self.request_data);
-            console.log(self.model);
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/crud/update/',
-                contentType: "application/json",
-                dataType: 'json',
-                type: 'POST',
-                data: self.request_data,
-                success: function(result){
-                    if(self.model == 'user'){
-                        self.users.pop(self.item_to_update);
-                        self.users.push(result);
-                    }
-                    if(self.model == 'category'){
-                        self.categories.pop(self.item_to_update);
-                        self.categories.push(result);
-                    }
-                    if(self.model == 'channel'){
-                        self.channels.pop(self.item_to_update);
-                        self.channels.push(result);
-                    }
-                },
-                error: function(error) {
-                   console.log(error);
-                }
-            });
 
-            self.id = null;
-            self.name = "";
-            self.username = "";
-            self.password = "";
-            self.is_admin = "";
-            self.url = "";
-            self.operation = "";
-            self.item_to_update = null;
+            this.id = null;
+            this.name = "";
+            this.username = "";
+            this.password = "";
+            this.is_admin = "";
+            this.url = "";
+            this.operation = "";
+            this.item_to_update = null;
         },
         deleteClick(model){
             self = this;
+            params = null;
 
-            if(self.model == 'user'){
-                self.request_data = JSON.stringify({
-                    "model": "user", "res_id":self.item_to_delete.id
+            if(this.model == 'user'){
+                params = JSON.stringify({
+                    "user_id":this.item_to_delete.id
                 });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/user/delete/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.users.pop(self.item_to_delete);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+
             }
 
-            if(self.model == 'category'){
-                self.request_data = JSON.stringify({
-                    "model": "category", "res_id":self.item_to_delete.id
+            if(this.model == 'category'){
+                params = JSON.stringify({
+                    "category_id":this.item_to_delete.id
+                });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/category/delete/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.categories.pop(self.item_to_delete);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
             
-            if(self.model == 'channel'){
-                self.request_data = JSON.stringify({
-                    "model": "channel", "res_id":self.item_to_delete.id
+            if(this.model == 'channel'){
+                params = JSON.stringify({
+                    "channel_id":this.item_to_delete.id
+                });
+
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/api/channel/delete/',
+                    contentType: "application/json",
+                    dataType: 'json',
+                    type: 'POST',
+                    data: params,
+                    success: function(data){
+                        self.channels.pop(self.item_to_delete);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
                 });
             }
 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/crud/delete/',
-                contentType: "application/json",
-                dataType: 'json',
-                type: 'POST',
-                data: self.request_data,
-                success: function(result){
-                    if(self.model == 'user'){
-                        self.users.pop(self.item_to_delete);
-                    }
-                    if(self.model == 'category'){
-                        self.categories.pop(self.item_to_delete);
-                    }
-                    if(self.model == 'channel'){
-                        self.channels.pop(self.item_to_delete);
-                    }
-                },
-                error: function(error) {
-                   console.log(error);
-                }
-            });
-
-            self.item_to_delete = {'name':''};
-            self.operation = "";
-            self.name = "";
+            this.item_to_delete = {'name':''};
+            this.operation = "";
+            this.name = "";
         },
         setObjectClick(model, item){
             this.operation = "update";
@@ -210,17 +275,19 @@ const admin_app = new Vue({
         }
     },
     created: function(){
-        that = this;
+        self = this;
+
         $.ajax({
-            url: 'http://127.0.0.1:8000/api/crud/all/',
+            url: 'http://127.0.0.1:8000/api/admin/all/',
             contentType: "application/json",
             dataType: 'json',
-            type: 'GET',
+            type: 'POST',
+            data: {},
             success: function(result){
-                //console.log(result.data.users);
-                that.users = result.data.users;
-                that.categories = result.data.categories;
-                that.channels = result.data.channels;
+                //console.log(result);
+                self.users = result.data.users;
+                self.categories = result.data.categories;
+                self.channels = result.data.channels;
             },
             error: function(error) {
                 console.log(error);

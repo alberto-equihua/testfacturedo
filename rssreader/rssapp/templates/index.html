@@ -59,7 +59,7 @@
         <div class="container">
             <h1>Inbox</h1>
             <button type="button" @click="getChannels" class="btn btn-primary" data-toggle="modal" data-target="#form-modal-channels">
-                Add Channel
+                Add Channels
             </button>
 
             <table v-for="item of invox" class="table table-striped table-hover">
@@ -69,7 +69,11 @@
                 </tr>
                 <tr v-for="en of item.entries_ids">
                     <td>${en.published}</td>
-                    <td><a href="${en.link}">${en.summary}</a></td>
+                    <td>
+                        <b>${item.feed_id.title}</b>
+                        <br/>
+                        <a v-bind:href="en.link" target="_blank">${en.summary}</a>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -92,7 +96,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Name</th>
-                                <th scope="col">Url</th>
+                                <th scope="col">Category</th>
                                 <th scope="col">Add</th>
                                 <th scope="col">Remove</th>
                             </tr>
@@ -100,7 +104,7 @@
                         <tbody>
                             <tr v-for="item of channels">
                                 <td>${item.name}</td>
-                                <td>${item.url}</td>
+                                <td>${item.category}</td>
                                 <td>
                                     <input v-if="item.added === 0" type="checkbox" @click="addChannelClick(item)" value="Add"/>
                                 </td>

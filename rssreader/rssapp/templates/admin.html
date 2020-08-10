@@ -102,10 +102,13 @@
                                 <input type="checkbox" v-model="is_admin" name="is_admin">
                             </form>
                         </div>
-                        <div class="modal-footer">
+                        <div v-if="operation === 'create'" class="modal-footer">
                             <button type="button" class="btn btn-secundary" data-dismiss="modal">Close</button>
-                            
-                            <button v-if="operation === 'create'" type="button" @click="createClick" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                            <button type="button" @click="createClick" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+                        
+                        </div>
+                        <div v-if="operation === 'update'" class="modal-footer">
+                            <button type="button" class="btn btn-secundary" data-dismiss="modal">Close</button>
                             <button v-if="operation === 'update'" type="button" @click="updateClick" class="btn btn-primary" data-dismiss="modal">Update changes</button>
                         </div>
                         </div>
@@ -153,6 +156,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secundary" data-dismiss="modal">Close</button>
+                        
                         <button type="button" v-if="operation === 'create'" @click="createClick" class="btn btn-primary" data-dismiss="modal">Save changes</button>
                         <button type="button" v-if="operation === 'update'" @click="updateClick" class="btn btn-primary" data-dismiss="modal">Update changes</button>
                     </div>
@@ -256,6 +260,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static  'js/api.js' %}"></script>
 <script src="{% static  'js/admin-app.js' %}"></script>
 
 </body>
