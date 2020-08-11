@@ -34,6 +34,7 @@ def login_view(request, *args, **kwargs):
     
     if user.is_admin:
         return HttpResponsePermanentRedirect("/admin/")
+    
     return HttpResponsePermanentRedirect("/")
 
 def logout_view(request, *args, **kwargs):

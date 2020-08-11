@@ -27,6 +27,7 @@ def create(request):
         )
         serializer = RssChannelSerializer(rsschanel)
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -80,6 +81,7 @@ def update(request):
             return JsonResponse({'error':'Channel not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -104,6 +106,7 @@ def delete(request):
         else:
             return JsonResponse({'error':'Channel not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse({'data':'The record has been deleted'}, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -156,8 +159,10 @@ def get_rsschannel_data(request):
                     channels.append(ch)
                 serializer = RssChannelSerializer(channels, many=True)
                 return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+            
             else:
                 return JsonResponse({'error':'User not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
+        
         elif request.data.get('async'):
             user_id = request.data.get('user_id', False)
 

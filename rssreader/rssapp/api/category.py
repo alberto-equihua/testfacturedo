@@ -19,6 +19,7 @@ def create(request):
         )
         serializer = CategorySerializer(category)
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -35,6 +36,7 @@ def read(request):
             return JsonResponse({'error':'Category not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
         
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -53,6 +55,7 @@ def update(request):
             return JsonResponse({'error':'Category not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
 
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -69,5 +72,6 @@ def delete(request):
             return JsonResponse({'error':'Category not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
         
         return JsonResponse({'data':'The record has been deleted'}, safe=False, status=status.HTTP_200_OK)
+    
     except Exception as e:
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -2,6 +2,7 @@ import feedparser
 from rssapp.models import Log
 
 class RssChannelData():
+    
     def __init__(self):
         self.feed = {}
         self.entries = []
@@ -14,18 +15,20 @@ class RssChannelData():
         while intents <= 3:
             try:
                 data = feedparser.parse(url)
-                #print(url)
+
                 feeds = self._get_feed(data)
                 entries = self._get_entries(data)
                 intents = 4
+            
             except Exception as e:
                 intents += 1
+                
                 if intents == 3:
                     Log.objects.create(
                         url = url,
                         error = str(e)
                     )
-        #print(feeds, entries)
+
         self.feed = feeds
         self.entries = entries
 
