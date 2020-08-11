@@ -24,7 +24,6 @@ def create(request):
         serializer = UsersSerializer(user)
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'POST'])
@@ -67,7 +66,6 @@ def update(request):
         
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET', 'POST'])

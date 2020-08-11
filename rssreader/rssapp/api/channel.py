@@ -81,7 +81,6 @@ def update(request):
 
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -106,7 +105,6 @@ def delete(request):
             return JsonResponse({'error':'Channel not found'}, safe=False, status=status.HTTP_400_BAD_REQUEST)
         return JsonResponse({'data':'The record has been deleted'}, safe=False, status=status.HTTP_200_OK)
     except Exception as e:
-        print(e)
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST', 'GET'])
@@ -183,7 +181,6 @@ def get_rsschannel_data(request):
                             ch.save()
                             
                             for en in entries:
-                                #print(en)
                                 e = Entry.objects.create(
                                     entry_id = en['id'],
                                     link = en['link'],
@@ -198,6 +195,5 @@ def get_rsschannel_data(request):
                 return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
                 
     except Exception as e:
-        print(e)
         return JsonResponse({'error':'Internal server error'}, safe=False, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
