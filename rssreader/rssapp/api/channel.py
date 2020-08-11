@@ -136,7 +136,13 @@ def get_channel_users(request):
         """, [user_id, user_id])
 
         for row in cursor.fetchall():
-            channels.append({'id':row[0], 'name': row[1], 'url': row[2], 'category':row[3], 'added':row[4]})
+            channels.append({
+                'id':row[0], 
+                'name': row[1], 
+                'url': row[2], 
+                'category':row[3], 
+                'added':row[4]
+            })
 
         return JsonResponse({'data':channels}, safe=False, status=status.HTTP_200_OK)
     else:
