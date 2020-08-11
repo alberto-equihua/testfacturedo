@@ -19,7 +19,7 @@ pip install djangorestframework
 pip install feedparser
 ```
 
-### para ejecutar la aplicacion abara una terminal y dirijase hasta la carpeta rssreader
+### para ejecutar la aplicacion abra una terminal y dirijase hasta la carpeta rssreader
 
 ### ejecute el siguiente comando
 
